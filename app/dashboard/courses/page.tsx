@@ -31,16 +31,14 @@ export default function CoursesPage() {
   );
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">My Courses</h2>
-        <p className="text-gray-500">
-          Manage and track all your published courses.
-        </p>
+    <div className="space-y-6 md:space-y-8 lg:space-y-10">
+      <div className="flex flex-col items-center md:flex-row md:justify-between">
+        <h2 className="text-3xl font-bold tracking-tight md:text-4xl">My Courses</h2>
+        <p className="text-gray-500 md:text-lg">Manage and track all your published courses.</p>
       </div>
 
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1">
+      <div className="flex flex-col items-center md:flex-row md:justify-between md:gap-4">
+        <div className="relative flex-1 md:w-1/2">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
           <input
             type="text"
@@ -50,13 +48,27 @@ export default function CoursesPage() {
             className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+        <button
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 md:ml-4"
+          onClick={() => window.location.href = '/dashboard/publish'}
+        >
           Create New Course
         </button>
       </div>
 
-      <div className="rounded-md border border-gray-200">
-        <table className="min-w-full divide-y divide-gray-200">
+      <div className="rounded-md border border-gray-200 md:overflow-x-auto">
+        <div className="grid grid-cols-1 gap-4 md:hidden">
+          {filteredCourses.map((course) => (
+            <div key={course.id} className="p-4 border rounded-md shadow-md">
+              <h3 className="text-lg font-bold">{course.title}</h3>
+              <p>Status: {course.status}</p>
+              <p>Students: {course.students}</p>
+              <p>Revenue: ${course.revenue}</p>
+              <p>Last Updated: {course.lastUpdated}</p>
+            </div>
+          ))}
+        </div>
+        <table className="min-w-full divide-y divide-gray-200 hidden md:table">
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course Title</th>
