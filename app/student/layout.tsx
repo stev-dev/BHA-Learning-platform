@@ -17,8 +17,19 @@ import {
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { AuthProvider, useAuth } from "@/lib/AuthContext";
+import { useScroll } from "./components/scroll-context"; // Importez le contexte de défilement
+
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+ const { topCoursesRef } = useScroll();
+
+
+ const handleScrollToTopCourses = () => {
+   topCoursesRef.current?.scrollIntoView({
+     behavior: "smooth",
+     block: "start",
+   });
+ };
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const { user, logout } = useAuth(); // Utilisez le contexte d'authentification
@@ -59,11 +70,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <span>Catégories</span>
                   </Link>
                   <Link
-                    href="#"
-                    className="flex items-center text-gray-600 hover:text-amber-600 transition-colors duration-200"
+                    href="#top-courses"
+  onClick={(e) => {
+    e.preventDefault();
+    handleScrollToTopCourses();
+  }}
+                    className="text-gray-600 hover:text-amber-600 transition-colors duration-200 flex items-center"
                   >
                     <Star className="h-4 w-4 mr-1" />
-                    <span>Parcours</span>
+                    <span>Les tops</span>
                   </Link>
                 </div>
               </div>
@@ -83,13 +98,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {/* Right Navigation */}
               <div className="flex items-center space-x-4">
                 <div className="hidden md:flex items-center space-x-6">
-                  <Link
-                    href="#"
-                    className="text-gray-600 hover:text-amber-600 transition-colors duration-200 flex items-center"
-                  >
-                    <Star className="h-4 w-4 mr-1" />
-                    <span>Les tops</span>
-                  </Link>
                   <Link
                     href="#"
                     className="text-gray-600 hover:text-amber-600 group transition-colors duration-200 relative"
@@ -189,19 +197,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <span>Catégories</span>
                 </Link>
                 <Link
-                  href="#"
-                  className="flex items-center px-4 py-3 text-gray-700 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors duration-200"
-                >
-                  <Star className="h-4 w-4 mr-2 text-amber-600" />
-                  <span>Parcours</span>
-                </Link>
-                <Link
-                  href="#"
+                  href="#top-courses"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleScrollToTopCourses();
+                    setIsMenuOpen(false); // Fermer le menu mobile après le clic
+                  }}
                   className="flex items-center px-4 py-3 text-gray-700 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors duration-200"
                 >
                   <Star className="h-4 w-4 mr-2 text-amber-600" />
                   <span>Les tops</span>
                 </Link>
+
                 <Link
                   href="#"
                   className="flex items-center px-4 py-3 text-gray-700 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors duration-200"

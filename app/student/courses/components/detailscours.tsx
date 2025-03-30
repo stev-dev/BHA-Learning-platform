@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   ChevronDown,
   ChevronUp,
@@ -9,11 +9,13 @@ import {
   PlayCircle,
   FileText,
   Server,
+  BookOpen,
+  FileQuestion,
 } from "lucide-react";
 import { Module, Course } from "./data";
 
 interface ContentItem {
-  type: "video" | "pdf";
+  type: "video" | "pdf" | "exercise" | "exam";
   title: string;
   url: string;
   completed?: boolean;
@@ -42,11 +44,14 @@ export default function CourseDetailClient({
   isEnrolled,
 }: CourseDetailClientProps) {
   const [expandedModules, setExpandedModules] = useState<number[]>([]);
-  const [selectedSubModule, setSelectedSubModule] = useState<{
-    moduleIndex: number;
-    subModuleIndex: number;
-  } | null>({ moduleIndex: 0, subModuleIndex: 0 });
+  const [selectedSubModule, setSelectedSubModule] = useState({
+    moduleIndex: 0,
+    subModuleIndex: 0,
+  });
   const [showScrollToTop, setShowScrollToTop] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  const isModuleExpanded = (index: number) => expandedModules.includes(index);
 
   const toggleModule = (index: number) => {
     setExpandedModules((prev) =>
@@ -54,8 +59,18 @@ export default function CourseDetailClient({
     );
   };
 
+  const scrollToContent = () => {
+    setTimeout(() => {
+      contentRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
+  };
+
   const selectSubModule = (moduleIndex: number, subModuleIndex: number) => {
     setSelectedSubModule({ moduleIndex, subModuleIndex });
+    scrollToContent();
   };
 
   useEffect(() => {
@@ -71,7 +86,6 @@ export default function CourseDetailClient({
   };
 
   const getPreviousSubModule = () => {
-    if (!selectedSubModule) return null;
     const { moduleIndex, subModuleIndex } = selectedSubModule;
     if (subModuleIndex > 0) {
       return { moduleIndex, subModuleIndex: subModuleIndex - 1 };
@@ -86,7 +100,6 @@ export default function CourseDetailClient({
   };
 
   const getNextSubModule = () => {
-    if (!selectedSubModule) return null;
     const { moduleIndex, subModuleIndex } = selectedSubModule;
     if (subModuleIndex < modules[moduleIndex].subModules.length - 1) {
       return { moduleIndex, subModuleIndex: subModuleIndex + 1 };
@@ -99,13 +112,142 @@ export default function CourseDetailClient({
 
   const handlePrevious = () => {
     const prev = getPreviousSubModule();
-    if (prev) setSelectedSubModule(prev);
+    if (prev) {
+      setSelectedSubModule(prev);
+      scrollToContent();
+    }
   };
 
   const handleNext = () => {
     const next = getNextSubModule();
-    if (next) setSelectedSubModule(next);
+    if (next) {
+      setSelectedSubModule(next);
+      scrollToContent();
+    }
   };
+
+  const renderContentSection = (
+    title: string,
+    icon: React.ReactNode,
+    type: ContentItem["type"],
+    color: string
+  ) => {
+    const currentModule = modules[selectedSubModule.moduleIndex];
+    const currentContent =
+      currentModule.subModulesContent?.[selectedSubModule.subModuleIndex];
+    const items = currentContent?.contentItems.filter(
+      (item) => item.type === type
+    );
+
+    if (!items || items.length === 0) return null;
+
+    const colorClasses = {
+      blue: {
+        bg: "bg-blue-50",
+        border: "border-blue-200",
+        text: "text-blue-500",
+        button: "bg-blue-500 hover:bg-blue-600",
+      },
+      purple: {
+        bg: "bg-purple-50",
+        border: "border-purple-200",
+        text: "text-purple-500",
+        button: "bg-purple-500 hover:bg-purple-600",
+      },
+      green: {
+        bg: "bg-green-50",
+        border: "border-green-200",
+        text: "text-green-500",
+        button: "bg-green-500 hover:bg-green-600",
+      },
+      red: {
+        bg: "bg-red-50",
+        border: "border-red-200",
+        text: "text-red-500",
+        button: "bg-red-500 hover:bg-red-600",
+      },
+    };
+
+    return (
+      <section className="mb-8">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          {icon}
+          {title}
+        </h2>
+        <div className="space-y-4">
+          {items.map((item, index) => (
+            <div
+              key={index}
+              className={`${
+                colorClasses[color as keyof typeof colorClasses].bg
+              } p-4 rounded-lg ${
+                colorClasses[color as keyof typeof colorClasses].border
+              } flex items-center justify-between hover:shadow-md transition-shadow`}
+            >
+              <div className="flex items-center gap-3">
+                {item.type === "video" && (
+                  <PlayCircle
+                    className={`w-6 h-6 ${
+                      colorClasses[color as keyof typeof colorClasses].text
+                    }`}
+                  />
+                )}
+                {item.type === "pdf" && (
+                  <FileText
+                    className={`w-6 h-6 ${
+                      colorClasses[color as keyof typeof colorClasses].text
+                    }`}
+                  />
+                )}
+                {item.type === "exercise" && (
+                  <BookOpen
+                    className={`w-6 h-6 ${
+                      colorClasses[color as keyof typeof colorClasses].text
+                    }`}
+                  />
+                )}
+                {item.type === "exam" && (
+                  <FileQuestion
+                    className={`w-6 h-6 ${
+                      colorClasses[color as keyof typeof colorClasses].text
+                    }`}
+                  />
+                )}
+                <div>
+                  <span className="font-medium">{item.title}</span>
+                  {item.duration && (
+                    <p className="text-sm text-gray-500">{item.duration}</p>
+                  )}
+                </div>
+              </div>
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${
+                  colorClasses[color as keyof typeof colorClasses].button
+                } text-white px-4 py-2 rounded-md transition-colors flex items-center gap-2`}
+              >
+                {item.type === "video" && <PlayCircle className="w-5 h-5" />}
+                {item.type === "pdf" && <FileText className="w-5 h-5" />}
+                {item.type === "exercise" && <BookOpen className="w-5 h-5" />}
+                {item.type === "exam" && <FileQuestion className="w-5 h-5" />}
+                {item.type === "video" ? "Regarder" : "Ouvrir"}
+              </a>
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  };
+
+  if (!modules || modules.length === 0) {
+    return <div className="p-6 text-center">Aucun module disponible</div>;
+  }
+
+  const currentModule = modules[selectedSubModule.moduleIndex];
+  const currentSubModule =
+    currentModule?.subModules[selectedSubModule.subModuleIndex];
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -127,19 +269,19 @@ export default function CourseDetailClient({
                 </span>
                 <ChevronDown
                   className={`w-5 h-5 text-gray-400 transition-transform ${
-                    expandedModules.includes(moduleIndex) ? "rotate-180" : ""
+                    isModuleExpanded(moduleIndex) ? "rotate-180" : ""
                   }`}
                 />
               </button>
-              {expandedModules.includes(moduleIndex) && (
+              {isModuleExpanded(moduleIndex) && (
                 <div className="ml-4 space-y-1 mt-1">
                   {module.subModules.map((subModule, subIndex) => (
                     <button
                       key={subIndex}
                       onClick={() => selectSubModule(moduleIndex, subIndex)}
                       className={`w-full flex items-center gap-2 py-2 text-left rounded-md px-2 ${
-                        selectedSubModule?.moduleIndex === moduleIndex &&
-                        selectedSubModule?.subModuleIndex === subIndex
+                        selectedSubModule.moduleIndex === moduleIndex &&
+                        selectedSubModule.subModuleIndex === subIndex
                           ? "bg-blue-900 text-blue-200"
                           : "text-gray-300 hover:bg-gray-700"
                       }`}
@@ -155,21 +297,17 @@ export default function CourseDetailClient({
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 bg-white p-6 overflow-y-auto">
-        {selectedSubModule ? (
+      <div className="flex-1 bg-white p-6 overflow-y-auto" ref={contentRef}>
+        {currentModule && currentSubModule ? (
           <div>
             <div className="flex items-center justify-between mb-6 border-b border-gray-200 pb-4">
               <div>
                 <div className="text-gray-500 text-sm mb-1">
-                  Module {selectedSubModule.moduleIndex + 1} {`>`} Leçon{" "}
+                  Module {selectedSubModule.moduleIndex + 1} &gt; Leçon{" "}
                   {selectedSubModule.subModuleIndex + 1}
                 </div>
                 <h1 className="text-2xl font-bold text-gray-900">
-                  {
-                    modules[selectedSubModule.moduleIndex].subModules[
-                      selectedSubModule.subModuleIndex
-                    ]
-                  }
+                  {currentSubModule}
                 </h1>
               </div>
               <div className="flex items-center gap-2">
@@ -190,93 +328,36 @@ export default function CourseDetailClient({
               </div>
             </div>
 
-            {!isEnrolled ? (
+            {isEnrolled ? (
               <div className="space-y-8">
-                {/* Section Vidéos */}
-                <section>
-                  <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                    Vidéos
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {modules[selectedSubModule.moduleIndex].subModulesContent?.[
-                      selectedSubModule.subModuleIndex
-                    ]?.contentItems
-                      .filter((item) => item.type === "video")
-                      .map((item, index) => (
-                        <div
-                          key={index}
-                          className="bg-gray-50 p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
-                        >
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-2">
-                              <PlayCircle className="w-6 h-6 text-blue-500" />
-                              <span className="font-medium">{item.title}</span>
-                              {item.duration && (
-                                <span className="text-sm text-gray-500 ml-2">
-                                  ({item.duration})
-                                </span>
-                              )}
-                            </div>
-                            {item.completed && (
-                              <span className="text-green-600 text-sm">
-                                Complété
-                              </span>
-                            )}
-                          </div>
-                          <div className="bg-gray-200 h-48 rounded-lg relative overflow-hidden">
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <button
-                                onClick={() => window.open(item.url, "_blank")}
-                                className="bg-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center hover:bg-blue-600 transition-colors"
-                              >
-                                <PlayCircle className="w-8 h-8" />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                </section>
+                {renderContentSection(
+                  "Vidéos du Cours",
+                  <PlayCircle className="w-5 h-5 text-blue-500" />,
+                  "video",
+                  "blue"
+                )}
 
-                {/* Section PDFs des Cours */}
-                <section>
-                  <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                    Documents du Cours
-                  </h2>
-                  <div className="space-y-4">
-                    {modules[selectedSubModule.moduleIndex].subModulesContent?.[
-                      selectedSubModule.subModuleIndex
-                    ]?.contentItems
-                      .filter((item) => item.type === "pdf")
-                      .map((item, index) => (
-                        <div
-                          key={index}
-                          className="bg-gray-50 p-4 rounded-lg border border-gray-200 flex items-center justify-between hover:shadow-md transition-shadow"
-                        >
-                          <div className="flex items-center gap-3">
-                            <FileText className="w-6 h-6 text-purple-500" />
-                            <div>
-                              <span className="font-medium">{item.title}</span>
-                              <p className="text-sm text-gray-500">
-                                Document de référence
-                              </p>
-                            </div>
-                          </div>
-                          <a
-                            href={item.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="bg-purple-500 text-white px-4 py-2 rounded-md hover:bg-purple-600 transition-colors flex items-center gap-2"
-                          >
-                            <FileText className="w-5 h-5" />
-                            Ouvrir
-                          </a>
-                        </div>
-                      ))}
-                  </div>
-                </section>
+                {renderContentSection(
+                  "Documents du Cours",
+                  <FileText className="w-5 h-5 text-purple-500" />,
+                  "pdf",
+                  "purple"
+                )}
 
-                {/* Navigation */}
+                {renderContentSection(
+                  "Exercices Pratiques",
+                  <BookOpen className="w-5 h-5 text-green-500" />,
+                  "exercise",
+                  "green"
+                )}
+
+                {renderContentSection(
+                  "Examens et Évaluations",
+                  <FileQuestion className="w-5 h-5 text-red-500" />,
+                  "exam",
+                  "red"
+                )}
+
                 <div className="flex justify-between mt-6 pt-4 border-t border-gray-200">
                   <button
                     onClick={handlePrevious}
@@ -303,9 +384,9 @@ export default function CourseDetailClient({
                   Accès Restreint
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  Inscrivez-vous pour accéder aux vidéos et documents du cours.
+                  Inscrivez-vous pour accéder aux vidéos, documents, exercices
+                  et examens du cours.
                 </p>
-                
                 <button className="px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600">
                   S'inscrire au Cours
                 </button>

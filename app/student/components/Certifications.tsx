@@ -7,19 +7,19 @@ const certifications = [
     id: 1,
     image: "/images/CR1.avif",
     type: "Certification",
-    title: "Introduction to Programming",
+    title: "certification d'un cours",
   },
   {
     id: 2,
     image: "/images/R4.jpeg", 
     type: "Certification",
-    title: "Web Development",
+    title: "certification d'un module",
   },
   {
     id: 3,
     image: "/images/R5.avif",
     type: "Certification",
-    title: "Data Science",
+    title: "certification d'un projet",
   },
 ];
 

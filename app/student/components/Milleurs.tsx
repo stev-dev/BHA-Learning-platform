@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image";
 import CountUp from "react-countup";
 import { useInView } from "react-intersection-observer";
-
+import { useScroll } from "@/app/student/components/scroll-context"; // Importez le contexte de défilement
 // Define types for the data
 interface Statistics {
   moocs: number;
@@ -138,9 +138,10 @@ const Meilleurs: React.FC = () => {
     triggerOnce: true,
     threshold: 0.2,
   });
+  const { topCoursesRef } = useScroll();
 
   return (
-    <div className="container mx-auto px-4 py-12">
+    <div className="container mx-auto px-4 py-12" ref={topCoursesRef}>
       {/* Title Section */}
       <div
         ref={titleRef}
@@ -184,10 +185,14 @@ const Meilleurs: React.FC = () => {
       </div>
 
       {/* Description and MOOCs Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div
+        className=" grid grid-cols-1 md:grid-cols-3 gap-8"
+        ref={topCoursesRef}
+      >
         {/* Description Section */}
         <div
           ref={descRef}
+          id="top-courses"
           className={`md:col-span-1 transition-all duration-1000 ${
             descInView
               ? "opacity-100 translate-x-0"

@@ -51,7 +51,7 @@ const Login: React.FC = () => {
 
           <div className="flex items-center">
             <hr className="flex-1 border-gray-300" />
-            <span className="px-3 text-sm text-gray-500">ou</span>
+            <span className="px-3 text-sm text-gray-500"></span>
             <hr className="flex-1 border-gray-300" />
           </div>
 

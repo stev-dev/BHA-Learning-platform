@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/AuthContext"; // Importez useAuth
+import { useAuth } from "@/lib/AuthContext";
 
 const FormInput: React.FC<{
   id: string;
@@ -14,8 +14,8 @@ const FormInput: React.FC<{
   placeholder: string;
   required?: boolean;
 }> = ({ id, label, type, value, onChange, placeholder, required = false }) => (
-  <div className="space-y-1">
-    <label htmlFor={id} className="block text-sm font-medium text-gray-900">
+  <div className="space-y-0.5">
+    <label htmlFor={id} className="block text-xs font-medium text-gray-900">
       {label}
     </label>
     <input
@@ -23,7 +23,7 @@ const FormInput: React.FC<{
       id={id}
       value={value}
       onChange={onChange}
-      className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+      className="w-full px-2 py-1 text-sm bg-gray-50 border border-gray-300 rounded-md text-gray-900 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-colors"
       placeholder={placeholder}
       required={required}
     />
@@ -37,7 +37,7 @@ const FormButton: React.FC<{
   variant?: "primary" | "secondary";
 }> = ({ type = "button", onClick, children, variant = "primary" }) => {
   const baseStyles =
-    "w-full px-5 py-2.5 text-sm font-medium text-white rounded-lg focus:ring-4 focus:outline-none transition-colors";
+    "w-full px-4 py-2 text-sm font-medium text-white rounded-lg focus:ring-4 focus:outline-none transition-colors";
   const variantStyles = {
     primary: "bg-amber-600 hover:bg-amber-700 focus:ring-amber-300",
     secondary: "bg-blue-600 hover:bg-blue-700 focus:ring-blue-300",
@@ -56,7 +56,7 @@ const FormButton: React.FC<{
 
 export default function Register() {
   const router = useRouter();
-  const { login } = useAuth(); // Récupérez la fonction login
+  const { login } = useAuth();
   const [isPartner, setIsPartner] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -64,10 +64,12 @@ export default function Register() {
     password: "",
     confirmPassword: "",
     diploma: "",
-    subject: "",
-    specialty: "",
+    courseTitle: "",
+    courseDescription: "",
+    experience: "",
+    availability: "",
   });
-  const [error, setError] = useState<string | null>(null); // Ajout d'un état pour les erreurs
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
@@ -92,8 +94,8 @@ export default function Register() {
           password: formData.password,
           isPartner,
           diploma: formData.diploma,
-          subject: formData.subject,
-          specialty: formData.specialty,
+          experience: formData.experience,
+          availability: formData.availability,
         }),
       });
 
@@ -103,10 +105,7 @@ export default function Register() {
         throw new Error(data.error || "Registration failed");
       }
 
-      // Connectez automatiquement l'utilisateur après l'inscription (optionnel)
       login({ email: data.user.email, name: data.user.name }, data.token);
-
-      // Redirigez vers /student au lieu de /auth/login
       router.push("/student");
     } catch (error) {
       setError(
@@ -116,31 +115,37 @@ export default function Register() {
   };
 
   return (
-    <section className="bg-gray-50 min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-md border border-gray-200 p-4 sm:p-6 space-y-6">
-        <div className="space-y-4">
+    <section className="bg-gray-50 min-h-screen flex items-center justify-center p-4 sm:p-4 lg:p-5">
+      <div className="w-full max-w-md bg-white rounded-lg shadow-md border border-gray-200 p-4 sm:p-5 space-y-4">
+        <div className="space-y-2">
           <h1 className="text-xl sm:text-2xl font-bold text-gray-900 text-center">
             Créez votre compte
           </h1>
-          <div className="flex items-center justify-center gap-2">
-            <span className="text-sm font-medium text-gray-700">
-              {isPartner ? "Partenaire" : "Standard"}
-            </span>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={isPartner}
-                onChange={() => setIsPartner(!isPartner)}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 transition-colors">
-                <div className="w-5 h-5 bg-white rounded-full absolute top-0.5 left-0.5 peer-checked:translate-x-5 transition-transform"></div>
-              </div>
-            </label>
+          <div className="flex justify-center gap-2">
+            <button
+              onClick={() => setIsPartner(false)}
+              className={`px-2 py-1 text-xs font-medium rounded-md transition-colors ${
+                !isPartner
+                  ? "bg-blue-950 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              Standard
+            </button>
+            <button
+              onClick={() => setIsPartner(true)}
+              className={`px-2 py-1 text-xs font-medium rounded-md transition-colors ${
+                isPartner
+                  ? "bg-blue-950 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              Partenaire
+            </button>
           </div>
-          {error && <p className="text-sm text-red-600 text-center">{error}</p>}
+          {error && <p className="text-xs text-red-600 text-center">{error}</p>}
         </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
           <FormInput
             id="name"
             label="Votre nom"
@@ -178,40 +183,49 @@ export default function Register() {
             required
           />
           {isPartner && (
-            <>
+            <div className="bg-gray-100 border border-gray-300 rounded-md p-2 space-y-2 shadow-sm">
+              <h2 className="text-sm font-semibold text-gray-800 text-center">
+                Informations Partenaire
+              </h2>
               <FormInput
                 id="diploma"
-                label="Votre diplôme"
+                label="Diplôme"
                 type="text"
                 value={formData.diploma}
                 onChange={handleChange}
-                placeholder="Ex: Licence en Informatique"
+                placeholder="Ex: Master"
                 required
               />
-              <FormInput
-                id="subject"
-                label="Votre matière"
-                type="text"
-                value={formData.subject}
-                onChange={handleChange}
-                placeholder="Ex: Mathématiques"
-                required
-              />
-              <FormInput
-                id="specialty"
-                label="Votre spécialité"
-                type="text"
-                value={formData.specialty}
-                onChange={handleChange}
-                placeholder="Ex: Développement Web"
-                required
-              />
-            </>
+              <div className="flex gap-2">
+                <div className="flex-1">
+                  <FormInput
+                    id="experience"
+                    label="Expérience"
+                    type="text"
+                    value={formData.experience}
+                    onChange={handleChange}
+                    placeholder="Ex: 5 ans"
+                    required
+                  />
+                </div>
+                <div className="flex-1">
+                  <FormInput
+                    id="availability"
+                    label="Disponibilité"
+                    type="text"
+                    value={formData.availability}
+                    onChange={handleChange}
+                    placeholder="Ex: Lundi"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
           )}
           <FormButton type="submit" variant="primary">
             {isPartner ? "Valider mon inscription" : "Créer un compte"}
           </FormButton>
-          <p className="text-sm text-gray-500 text-center">
+          <p className="text-xs text-gray-500 text-center">
             Vous avez déjà un compte ?{" "}
             <Link
               href="/auth/login"
