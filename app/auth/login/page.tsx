@@ -83,6 +83,8 @@ const Login: React.FC = () => {
                 Mot de passe
               </label>
               <input
+
+
                 type="password"
                 name="password"
                 id="password"
@@ -111,8 +113,8 @@ const Login: React.FC = () => {
                 </div>
               </div>
               <a
-                href="#"
-                className="text-sm font-medium text-blue-600 hover:underline"
+                href="motpassoublier"
+                className="text-sm font-medium text-blue-950 hover:underline"
               >
                 Mot de passe oublié ?
               </a>
@@ -129,7 +131,7 @@ const Login: React.FC = () => {
               Vous n'avez pas encore de compte ?{" "}
               <Link
                 href="/auth/register"
-                className="font-medium text-blue-600 hover:underline"
+                className="font-medium text-blue-950 hover:underline"
               >
                 S'inscrire
               </Link>

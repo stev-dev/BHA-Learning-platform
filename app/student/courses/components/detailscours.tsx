@@ -43,7 +43,7 @@ export default function CourseDetailClient({
   modules,
   isEnrolled,
 }: CourseDetailClientProps) {
-  const [expandedModules, setExpandedModules] = useState<number[]>([]);
+  const [expandedModules, setExpandedModules] = useState<number[]>([]); 
   const [selectedSubModule, setSelectedSubModule] = useState({
     moduleIndex: 0,
     subModuleIndex: 0,
@@ -51,8 +51,8 @@ export default function CourseDetailClient({
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  const isModuleExpanded = (index: number) => expandedModules.includes(index);
-
+  const isModuleExpanded = (index: number) => expandedModules.includes(index); // Fonction utilitaire pour vérifier si un module est développé
+// Fonction utilitaire pourvrir ou fermer un module
   const toggleModule = (index: number) => {
     setExpandedModules((prev) =>
       prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
@@ -67,12 +67,12 @@ export default function CourseDetailClient({
       });
     }, 100);
   };
-
+/// Fonction utilitaire pour sélectionner un sous-module et faire defiler vers le contenu
   const selectSubModule = (moduleIndex: number, subModuleIndex: number) => {
     setSelectedSubModule({ moduleIndex, subModuleIndex });
     scrollToContent();
   };
-
+/// Fonction utilitaire pour faire défiler vers le haut de la page
   useEffect(() => {
     const handleScroll = () => {
       setShowScrollToTop(window.scrollY > 300);
@@ -84,7 +84,7 @@ export default function CourseDetailClient({
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
+/// Fonction utilitaire pour obtenir le sous-module précédent
   const getPreviousSubModule = () => {
     const { moduleIndex, subModuleIndex } = selectedSubModule;
     if (subModuleIndex > 0) {
@@ -98,7 +98,7 @@ export default function CourseDetailClient({
     }
     return null;
   };
-
+/// Fonction utilitaire pour obtenir le sous-module suivant
   const getNextSubModule = () => {
     const { moduleIndex, subModuleIndex } = selectedSubModule;
     if (subModuleIndex < modules[moduleIndex].subModules.length - 1) {
@@ -125,7 +125,7 @@ export default function CourseDetailClient({
       scrollToContent();
     }
   };
-
+/// Fonction utilitaire pour rendre la section de contenu du module
   const renderContentSection = (
     title: string,
     icon: React.ReactNode,
@@ -185,6 +185,7 @@ export default function CourseDetailClient({
               } flex items-center justify-between hover:shadow-md transition-shadow`}
             >
               <div className="flex items-center gap-3">
+                {""}
                 {item.type === "video" && (
                   <PlayCircle
                     className={`w-6 h-6 ${
@@ -195,14 +196,14 @@ export default function CourseDetailClient({
                 {item.type === "pdf" && (
                   <FileText
                     className={`w-6 h-6 ${
-                      colorClasses[color as keyof typeof colorClasses].text
+                      colorClasses[color as keyof typeof colorClasses].text // Utilisez la classe de couleur appropriée
                     }`}
                   />
                 )}
                 {item.type === "exercise" && (
                   <BookOpen
                     className={`w-6 h-6 ${
-                      colorClasses[color as keyof typeof colorClasses].text
+                      colorClasses[color as keyof typeof colorClasses].text 
                     }`}
                   />
                 )}
@@ -215,6 +216,7 @@ export default function CourseDetailClient({
                 )}
                 <div>
                   <span className="font-medium">{item.title}</span>
+            
                   {item.duration && (
                     <p className="text-sm text-gray-500">{item.duration}</p>
                   )}
@@ -240,17 +242,19 @@ export default function CourseDetailClient({
       </section>
     );
   };
+  // Vérifiez si le module est vide ou non
+  // Si le module est vide, affichez un message indiquant qu'il n'y a pas de module disponible
 
   if (!modules || modules.length === 0) {
     return <div className="p-6 text-center">Aucun module disponible</div>;
   }
-
+// Vérifiez si le module sélectionné est valide ou non
   const currentModule = modules[selectedSubModule.moduleIndex];
   const currentSubModule =
     currentModule?.subModules[selectedSubModule.subModuleIndex];
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex max-h-screen bg-gray-50">
       {/* Sidebar */}
       <div className="w-64 bg-blue-950 text-white p-4 overflow-y-auto">
         <h2 className="text-xl font-bold mb-4 text-center">{course.title}</h2>
@@ -262,7 +266,7 @@ export default function CourseDetailClient({
             >
               <button
                 onClick={() => toggleModule(moduleIndex)}
-                className="w-full flex items-center justify-between text-left py-2 px-2 rounded hover:bg-gray-700"
+                className="w-full flex items-center justify-between text-left py-2 px-2 rounded hover:bg-white-200"
               >
                 <span className="text-white font-semibold">
                   Module {moduleIndex + 1}: {module.title}
@@ -273,6 +277,7 @@ export default function CourseDetailClient({
                   }`}
                 />
               </button>
+             { /*Vérifiez si le module est développé ou non*/}
               {isModuleExpanded(moduleIndex) && (
                 <div className="ml-4 space-y-1 mt-1">
                   {module.subModules.map((subModule, subIndex) => (

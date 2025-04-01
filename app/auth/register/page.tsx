@@ -210,12 +210,14 @@ export default function Register() {
                 </div>
                 <div className="flex-1">
                   <FormInput
-                    id="availability"
+                    id="
+                    
+                    "
                     label="Disponibilité"
                     type="text"
                     value={formData.availability}
                     onChange={handleChange}
-                    placeholder="Ex: Lundi"
+                    placeholder="Ex: Lundi-Vendredi"
                     required
                   />
                 </div>

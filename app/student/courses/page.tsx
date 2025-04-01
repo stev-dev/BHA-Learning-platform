@@ -12,11 +12,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { Course } from "./courses-data";
-
-// CORRECTION: Importation asynchrone déplacée dans useEffect
-let STATIC_COURSES: Course[] = [];
-
-// CourseCard Component - Taille optimisée
+// CourseCard Component
 const CourseCard: React.FC<{ course: Course; uniqueKey: string }> = ({
   course,
   uniqueKey,
@@ -29,11 +25,7 @@ const CourseCard: React.FC<{ course: Course; uniqueKey: string }> = ({
         fill
         className="object-cover rounded-t-lg"
       />
-      {course.isFeatured && (
-        <div className="absolute top-1 right-1 bg-yellow-400 text-[10px] font-semibold px-1.5 py-0.5 rounded-full">
-          Mis en avant
-        </div>
-      )}
+      
     </div>
     <div className="p-3 flex-1 flex flex-col">
       <div className="flex items-center gap-1 mb-1">
@@ -111,10 +103,10 @@ const Pagination: React.FC<{
         pageNumbers.push(i);
       }
 
-      // Ajouter des ellipses si nécessaire
+    
       if (startPage > 1) {
         pageNumbers.unshift(1);
-        if (startPage > 2) pageNumbers.splice(1, 0, -1); // -1 signifie ellipses
+        if (startPage > 2) pageNumbers.splice(1, 0, -1); 
       }
 
       if (endPage < totalPages) {
@@ -173,7 +165,7 @@ const Pagination: React.FC<{
     </div>
   );
 };
-
+{'/* Page principale des cours */}'}
 export default function CoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -187,14 +179,14 @@ export default function CoursesPage() {
   const [categoryPages, setCategoryPages] = useState<Record<string, number>>(
     {}
   );
-  const coursesPerPage = 8; // Augmenté pour afficher plus de cartes par page
+  const coursesPerPage = 3; 
 
   // CORRECTION: Utilisation correcte de l'importation asynchrone
   useEffect(() => {
     const fetchCourses = async () => {
       setLoading(true);
       try {
-        // Import dynamique des données de cours
+        
         const { STATIC_COURSES: fetchedCourses } = await import(
           "./courses-data"
         );
@@ -212,7 +204,6 @@ export default function CoursesPage() {
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value.toLowerCase());
-    // Réinitialiser les filtres et la pagination lors d'une nouvelle recherche
     setExpandedCategories(new Set());
     setCategoryPages({});
   };
@@ -420,7 +411,8 @@ export default function CoursesPage() {
           </div>
         ) : filteredCourses.length > 0 ? (
           <div className="space-y-12">
-            {Object.entries(groupedCourses).map(
+            {/* Affichage des sections de cours par catégorie */}
+            {Object.entries(groupedCourses).map( // Utilisation de Object.entries pour obtenir les catégories et leurs cours
               ([category, categoryCourses]) => {
                 const categoryId = categoryToId(category);
                 return (
@@ -442,7 +434,7 @@ export default function CoursesPage() {
                             : "Voir tous les cours"}
                           <ChevronDown
                             className={`h-4 w-4 transition-transform ${
-                              expandedCategories.has(category)
+                              expandedCategories.has(category) // Ajoutez la classe de rotation si la catégorie est expandée
                                 ? "rotate-180"
                                 : ""
                             }`}

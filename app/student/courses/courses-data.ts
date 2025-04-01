@@ -17,7 +17,7 @@ export interface Course {
 // Expanded STATIC_COURSES
 export const STATIC_COURSES: Course[] = [
   {
-    id: 1,
+    id: 19,
     title: "Introduction à la cybersécurité",
     category: "Informatique",
     image: "/images/Cyber.jpeg",
@@ -25,15 +25,15 @@ export const STATIC_COURSES: Course[] = [
     duration: "6 heures",
     description:
       "Apprenez les bases de la cybersécurité et protégez vos actifs numériques.",
-    rating: 4.8,
+    rating: 2.8,
     students: 1234,
     isFeatured: true,
   },
   {
-    id: 2,
+    id: 82,
     title: "Programmation Python Avancée",
     category: "Informatique",
-    image: "/images/Python.jpg",
+    image: "/images/ml.jpeg",
     level: "Intermédiaire",
     duration: "8 heures",
     description:
@@ -43,10 +43,10 @@ export const STATIC_COURSES: Course[] = [
     isFeatured: false,
   },
   {
-    id: 3,
+    id:332,
     title: "Développement Web avec React",
     category: "Informatique",
-    image: "/images/React.jpg",
+    image: "/images/ml.jpeg",
     level: "Intermédiaire",
     duration: "10 heures",
     description:
@@ -56,10 +56,10 @@ export const STATIC_COURSES: Course[] = [
     isFeatured: true,
   },
   {
-    id: 4,
+    id: 42,
     title: "Bases de données SQL",
     category: "Informatique",
-    image: "/images/SQL.jpg",
+    image: "/images/sql.jpeg",
     level: "Débutant",
     duration: "5 heures",
     description:
@@ -69,10 +69,10 @@ export const STATIC_COURSES: Course[] = [
     isFeatured: false,
   },
   {
-    id: 5,
+    id: 523,
     title: "Machine Learning Fondamentaux",
     category: "Data Science",
-    image: "/images/ML.jpg",
+    image: "/images/ml.jpeg",
     level: "Avancé",
     duration: "12 heures",
     description:
@@ -82,10 +82,10 @@ export const STATIC_COURSES: Course[] = [
     isFeatured: true,
   },
   {
-    id: 1,
+    id: 231,
     title: "Introduction à la cybersécurité",
     category: "Informatique",
-    image: "/images/Cyber.jpeg",
+    image: "/images/Gestion.jpeg",
     level: "Débutant",
     duration: "6 heures",
     description:
@@ -95,10 +95,10 @@ export const STATIC_COURSES: Course[] = [
     isFeatured: true,
   },
   {
-    id: 2,
+    id: 212,
     title: "Programmation Python Avancée",
     category: "Informatique",
-    image: "/images/Python.jpg",
+    image: "/images/Gestion.jpeg",
     level: "Intermédiaire",
     duration: "8 heures",
     description:
@@ -108,10 +108,10 @@ export const STATIC_COURSES: Course[] = [
     isFeatured: false,
   },
   {
-    id: 3,
+    id: 33,
     title: "Développement Web avec React",
     category: "Informatique",
-    image: "/images/React.jpg",
+    image: "/images/OIP.jpeg",
     level: "Intermédiaire",
     duration: "10 heures",
     description:
@@ -121,10 +121,10 @@ export const STATIC_COURSES: Course[] = [
     isFeatured: true,
   },
   {
-    id: 4,
+    id: 34,
     title: "Bases de données SQL",
     category: "Informatique",
-    image: "/images/SQL.jpg",
+    image: "/images/sql.jpeg",
     level: "Débutant",
     duration: "5 heures",
     description:
@@ -134,10 +134,23 @@ export const STATIC_COURSES: Course[] = [
     isFeatured: false,
   },
   {
-    id: 5,
+    id: 52,
     title: "Machine Learning Fondamentaux",
     category: "Data Science",
-    image: "/images/ML.jpg",
+    image: "/images/ml.jpeg",
+    level: "Avancé",
+    duration: "12 heures",
+    description:
+      "Explorez les algorithmes de machine learning et leurs applications pratiques.",
+    rating: 4.8,
+    students: 543,
+    isFeatured: true,
+  },
+  {
+    id: 22,
+    title: "Machine Learning Fondamentaux",
+    category: "Data Science",
+    image: "/images/Gestion.jpeg",
     level: "Avancé",
     duration: "12 heures",
     description:
@@ -150,7 +163,7 @@ export const STATIC_COURSES: Course[] = [
     id: 5,
     title: "Machine Learning Fondamentaux",
     category: "Data Science",
-    image: "/images/ML.jpg",
+    image: "/images/ml.jpeg",
     level: "Avancé",
     duration: "12 heures",
     description:
@@ -163,20 +176,7 @@ export const STATIC_COURSES: Course[] = [
     id: 5,
     title: "Machine Learning Fondamentaux",
     category: "Data Science",
-    image: "/images/ML.jpg",
-    level: "Avancé",
-    duration: "12 heures",
-    description:
-      "Explorez les algorithmes de machine learning et leurs applications pratiques.",
-    rating: 4.8,
-    students: 543,
-    isFeatured: true,
-  },
-  {
-    id: 5,
-    title: "Machine Learning Fondamentaux",
-    category: "Data Science",
-    image: "/images/ML.jpg",
+    image: "/images/ml.jpeg",
     level: "Avancé",
     duration: "12 heures",
     description:
