@@ -1,5 +1,4 @@
 import React from "react";
-import ClientLayout from "./ClientLayout"; // Nouveau composant client
 import "./globals.css"; // Styles globaux
 
 export const metadata = {
@@ -19,7 +18,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
       <body className="max-h-screen flex flex-col">
-        <ClientLayout>{children}</ClientLayout>
+        <div>{children}</div>
       </body>
     </html>
   );

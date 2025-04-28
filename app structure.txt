@@ -1,0 +1,89 @@
+learning-platform-app/
+├── app/
+│   ├── (auth)/             # Route Group for Auth Pages (e.g., /login, /register)
+│   │   ├── login/
+│   │   │   └── page.tsx
+│   │   ├── register/
+│   │   │   └── page.tsx
+│   │   └── layout.tsx      # Optional: Auth specific layout
+│   ├── (protected)/        # Route Group for Protected Pages (Requires Authentication)
+│   │   ├── student/        # Student Interface
+│   │   │   ├── courses/    # Student Course Browsing/Detail/Viewing
+│   │   │   │   ├── [slug]/ # Dynamic route for single course page
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── page.tsx # Course listing page
+│   │   │   ├── dashboard/  # Student Dashboard
+│   │   │   │   └── page.tsx
+│   │   │   ├── profile/    # Student Profile Management
+│   │   │   │   └── page.tsx
+│   │   │   └── layout.tsx  # Student interface layout (sidebar, header)
+│   │   ├── instructor/     # Instructor Interface
+│   │   │   ├── courses/    # Instructor Course Management
+│   │   │   │   ├── create/ # Course Creation Form
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── [slug]/ # Dynamic route for single course management
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── page.tsx # Instructor course list
+│   │   │   ├── dashboard/  # Instructor Dashboard
+│   │   │   │   └── page.tsx
+│   │   │   ├── profile/    # Instructor Profile
+│   │   │   │   └── page.tsx
+│   │   │   └── layout.tsx  # Instructor interface layout
+│   │   ├── admin/          # Admin Interface
+│   │   │   ├── categories/ # Category Management
+│   │   │   │   └── page.tsx
+│   │   │   ├── courses/    # Admin Course Management
+│   │   │   │   └── page.tsx
+│   │   │   ├── users/      # User Management
+│   │   │   │   └── page.tsx
+│   │   │   ├── settings/   # Platform Settings
+│   │   │   │   └── page.tsx
+│   │   │   └── layout.tsx  # Admin interface layout
+│   │   └── layout.tsx      # Optional: Base protected layout (e.g., adds authentication check)
+│   ├── api/                # API Routes
+│   │   ├── auth/           # Authentication related API (e.g., JWT validation helper)
+│   │   ├── admin/          # Admin specific API endpoints
+│   │   │   ├── categories/ # Admin category API
+│   │   │   │   └── route.ts
+│   │   │   ├── users/      # Admin user API
+│   │   │   │   └── route.ts
+│   │   │   └── courses/    # Admin course API
+│   │   │       └── route.ts
+│   │   ├── student/        # Student specific API endpoints
+│   │   │   ├── courses/    # Student course API (list, detail, enrollment)
+│   │   │   │   └── route.ts
+│   │   │   └── profile/    # Student profile API
+│   │   │       └── route.ts
+│   │   └── instructor/     # Instructor specific API endpoints
+│   │       ├── courses/    # Instructor course API (create, manage)
+│   │       │   └── route.ts
+│   │       └── profile/    # Instructor profile API
+│   │           └── route.ts
+│   ├── components/         # Reusable UI and Logic Components
+│   │   ├── ui/             # Generic UI elements (Button, Input, Card, Table, Modal, etc.)
+│   │   ├── layouts/        # Common layout components (Sidebar, Header, Footer)
+│   │   ├── auth/           # Auth specific components (Login Form, Register Form)
+│   │   ├── courses/        # Course-related components (CourseCard, LessonPlayer, CurriculumDisplay)
+│   │   ├── admin/          # Admin-specific UI components (UserTable, CategoryForm)
+│   │   ├── instructor/     # Instructor-specific UI components (CourseBuilderSections, LessonEditor)
+│   │   └── shared/         # Components used across multiple interfaces but not generic UI
+│   ├── lib/                # Utilities, Helpers, SDKs, Configurations
+│   │   ├── db.ts           # MongoDB connection setup
+│   │   ├── auth.ts         # Keycloak/Authentication helpers, middleware
+│   │   ├── api.ts          # Centralized API client functions
+│   │  	└── utils.ts        # General utility functions
+│   │   
+│   ├── models/             # Mongoose Models (MongoDB Schemas)
+│   │   ├── User.ts
+│   │   ├── Course.ts
+│   │   ├── Category.ts
+│   │   ├── Enrollment.ts
+│   │   └── ... (other models: Lesson, Section, Quiz, etc.)
+│   ├── styles/             # Tailwind CSS config and global styles
+│   │   ├── globals.css
+│   │   └── tailwind.config.ts
+│   ├── public/             # Static assets
+│   ├── .eslintrc.json      # ESLint configuration
+│   ├── prettier.config.js  # Prettier configuration
+│   ├── tsconfig.json
+│   └── package.json
