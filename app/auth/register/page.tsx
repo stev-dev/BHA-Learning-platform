@@ -75,6 +75,10 @@ export default function Register() {
     setFormData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
   };
 
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFormData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
@@ -113,6 +117,15 @@ export default function Register() {
       );
     }
   };
+   
+
+  const availabilityOptions = [
+    { value: "full-time", label: "Temps plein" },
+    { value: "part-time", label: "Temps partiel" },
+    { value: "weekends", label: "Weekends uniquement" },
+    { value: "evenings", label: "Soirées uniquement" },
+    { value: "flexible", label: "Disponibilité flexible" }
+  ];
 
   return (
     <section className="bg-gray-50 min-h-screen flex items-center justify-center p-4 sm:p-4 lg:p-5">
@@ -209,17 +222,25 @@ export default function Register() {
                   />
                 </div>
                 <div className="flex-1">
-                  <FormInput
-                    id="
-                    
-                    "
-                    label="Disponibilité"
-                    type="text"
-                    value={formData.availability}
-                    onChange={handleChange}
-                    placeholder="Ex: Lundi-Vendredi"
-                    required
-                  />
+                  <div className="space-y-0.5">
+                    <label htmlFor="availability" className="block text-xs font-medium text-gray-900">
+                      Disponibilité
+                    </label>
+                    <select
+                      id="availability"
+                      value={formData.availability}
+                      onChange={handleSelectChange}
+                      className="w-full px-2 py-1 text-sm bg-gray-50 border border-gray-300 rounded-md text-gray-900 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      required
+                    >
+                      <option value="">Sélectionnez une disponibilité</option>
+                      {availabilityOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
