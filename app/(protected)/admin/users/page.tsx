@@ -1,228 +1,217 @@
-'use client'; // This marks this component as a client-side component
+"use client";
 
-import React, { useState } from "react";
+// Import necessary components and icons
+import Table from "@/app/components/ui/Table"; // Reusable table component
+import Button from "@/app/components/ui/Button"; // Reusable button component
+import Modal from "@/app/components/ui/Modal"; // Reusable modal component
+import Input from "@/app/components/ui/Input"; // Reusable input component
+import { FaEdit, FaTrash, FaSearch } from "react-icons/fa"; // Icons for actions and search
+import { useState } from "react"; // React hook for managing state
 
-const initialUsers = [
-  { id: 1, name: "John Doe", email: "john.doe@example.com", role: "Admin" },
-  { id: 2, name: "Jane Smith", email: "jane.smith@example.com", role: "Editor" },
-  { id: 3, name: "Sam Brown", email: "sam.brown@example.com", role: "Viewer" },
-];
+const UsersPage = () => {
+  // State to store the list of users
+  const [users, setUsers] = useState([
+    { id: 1, name: "John Doe", email: "john@example.com", role: "Student" },
+    { id: 2, name: "Jane Smith", email: "jane@example.com", role: "Instructor" },
+  ]); 
+  // NOTE: Replace this mock data with real data fetched from the backend.
 
-export default function UsersPage() {
-  const [users, setUsers] = useState(initialUsers);
-  const [search, setSearch] = useState("");
-  const [newUser, setNewUser] = useState({ name: "", email: "", role: "" });
-  const [editingUser, setEditingUser] = useState<{ id: number; name: string; email: string; role: string } | null>(null);
+  // State to control the visibility of the modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Filter users based on search term
-  const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(search.toLowerCase()) ||
-    user.email.toLowerCase().includes(search.toLowerCase())
-  );
+  // State to store the current user being created or edited
+  const [currentUser, setCurrentUser] = useState<{ id?: number; name: string; email: string; role: string }>({
+    name: "",
+    email: "",
+    role: "Student", // Default role
+  });
 
-  const handleAddUser = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newUser.name && newUser.email && newUser.role) {
-      setUsers([...users, { ...newUser, id: users.length + 1 }]);
-      setNewUser({ name: "", email: "", role: "" }); // Clear form
-      alert("User added successfully!");
-    } else {
-      alert("Please fill all fields!");
-    }
-  };
+  // State to store the search query for filtering users
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const handleDeleteUser = (id: number) => {
-    setUsers(users.filter((user) => user.id !== id));
-    alert("User deleted successfully!");
-  };
-
-  const handleEditUser = (id: number) => {
-    const user = users.find((user) => user.id === id);
+  // Function to handle editing a user
+  const handleEdit = (id: number) => {
+    const user = users.find((user) => user.id === id); // Find the user by ID
     if (user) {
-      setEditingUser(user);
+      setCurrentUser(user); // Set the current user to the selected user
+      setIsModalOpen(true); // Open the modal
     }
   };
 
-  const handleUpdateUser = () => {
-    if (editingUser) {
-      setUsers(
-        users.map((user) =>
-          user.id === editingUser.id ? { ...editingUser } : user
+  // Function to handle deleting a user
+  const handleDelete = (id: number) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+    if (confirmDelete) {
+      setUsers((prev) => prev.filter((user) => user.id !== id)); // Remove the user from the list
+      // NOTE: Replace this with a DELETE request to the backend.
+    }
+  };
+
+  // Function to handle saving a user (create or update)
+  const handleSave = () => {
+    if (currentUser.name.trim() === "" || currentUser.email.trim() === "" || currentUser.role.trim() === "") {
+      alert("All fields are required."); // Validate input fields
+      return;
+    }
+
+    if (currentUser.id) {
+      // Update existing user
+      setUsers((prev) =>
+        prev.map((user) =>
+          user.id === currentUser.id ? { ...user, ...currentUser } : user
         )
       );
-      setEditingUser(null); // Reset editing mode
-      alert("User updated successfully!");
+      // NOTE: Replace this with a PUT request to update the user in the backend.
+    } else {
+      // Create new user
+      setUsers((prev) => [
+        ...prev,
+        { id: Date.now(), ...currentUser }, // Add the new user to the list
+      ]);
+      // NOTE: Replace this with a POST request to create the user in the backend.
     }
+    setIsModalOpen(false); // Close the modal
+    setCurrentUser({ name: "", email: "", role: "Student" }); // Reset the current user state
   };
 
+  // Function to handle opening the modal for creating a new user
+  const handleCreate = () => {
+    setCurrentUser({ name: "", email: "", role: "Student" }); // Reset the current user state
+    setIsModalOpen(true); // Open the modal
+  };
+
+  // Filter users based on the search query
+  const filteredUsers = users.filter((user) =>
+    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Users Management</h1>
-      
-      {/* Search */}
-      <div className="bg-white shadow rounded-lg p-6 mb-4">
-        <input
-          type="text"
-          placeholder="Search users..."
-          className="w-full p-2 border border-gray-300 rounded-md"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+    <div>
+      {/* Header section with title and "Create User" button */}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">Manage Users</h1>
+        <Button onClick={handleCreate} className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600">
+          Create User
+        </Button>
       </div>
 
-      {/* Users Table */}
-      <div className="bg-white shadow rounded-lg p-6">
-        <table className="w-full border-collapse border border-gray-200">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border border-gray-300 p-2 text-left">Name</th>
-              <th className="border border-gray-300 p-2 text-left">Email</th>
-              <th className="border border-gray-300 p-2 text-left">Role</th>
-              <th className="border border-gray-300 p-2 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredUsers.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="text-center p-4">
-                  No users found.
-                </td>
-              </tr>
-            ) : (
-              filteredUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50">
-                  <td className="border border-gray-300 p-2">{user.name}</td>
-                  <td className="border border-gray-300 p-2">{user.email}</td>
-                  <td className="border border-gray-300 p-2">{user.role}</td>
-                  <td className="border border-gray-300 p-2">
-                    <button
-                      className="text-blue-600 hover:underline mr-2"
-                      onClick={() => handleEditUser(user.id)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="text-red-600 hover:underline"
-                      onClick={() => handleDeleteUser(user.id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+      {/* Search bar for filtering users */}
+      <div className="flex items-center mb-4">
+        <div className="relative w-full max-w-md">
+          <Input
+            id="search"
+            name="search"
+            placeholder="Search users..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)} // Update the search query state
+            className="pl-10"
+          />
+          <FaSearch className="absolute top-3 left-3 text-gray-400" /> {/* Search icon */}
+        </div>
       </div>
 
-      {/* Add User Form */}
-      <div className="bg-white shadow rounded-lg p-6">
-        <h2 className="text-xl font-bold mb-4">Add New User</h2>
-        <form onSubmit={handleAddUser} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Name
-            </label>
-            <input
-              type="text"
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-              placeholder="Enter user name"
-              value={newUser.name}
-              onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input
-              type="email"
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-              placeholder="Enter user email"
-              value={newUser.email}
-              onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Role
-            </label>
-            <input
-              type="text"
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-              placeholder="Enter user role"
-              value={newUser.role}
-              onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-            />
-          </div>
-          <button
-            type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Add User
-          </button>
-        </form>
-      </div>
+      {/* Table displaying the list of users */}
+      <Table
+        headers={["Name", "Email", "Role", "Actions"]} // Table headers
+        rows={filteredUsers.map((user) => [
+          user.name,
+          user.email,
+          user.role,
+          <div className="flex space-x-2" key={user.id}>
+            {/* Edit button */}
+            <button
+              onClick={() => handleEdit(user.id)}
+              className="text-blue-500 hover:text-blue-700"
+              title="Edit"
+            >
+              <FaEdit />
+            </button>
+            {/* Delete button */}
+            <button
+              onClick={() => handleDelete(user.id)}
+              className="text-red-500 hover:text-red-700"
+              title="Delete"
+            >
+              <FaTrash />
+            </button>
+          </div>,
+        ])}
+      />
 
-      {/* Edit User Form */}
-      {editingUser && (
-        <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-xl font-bold mb-4">Edit User</h2>
+      {/* Modal for creating or editing a user */}
+      {isModalOpen && (
+        <Modal onClose={() => setIsModalOpen(false)}>
+          <h2 className="text-xl font-bold mb-4">
+            {currentUser.id ? "Edit User" : "Create User"} {/* Modal title */}
+          </h2>
           <form
             onSubmit={(e) => {
-              e.preventDefault();
-              handleUpdateUser();
+              e.preventDefault(); // Prevent form submission
+              handleSave(); // Save the user
             }}
             className="space-y-4"
           >
+            {/* Name input field */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label htmlFor="userName" className="block text-sm font-medium text-gray-700">
                 Name
               </label>
-              <input
-                type="text"
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                value={editingUser.name}
+              <Input
+                id="userName"
+                name="userName"
+                placeholder="Enter user name"
+                value={currentUser.name}
                 onChange={(e) =>
-                  setEditingUser({ ...editingUser, name: e.target.value })
+                  setCurrentUser((prev) => ({ ...prev, name: e.target.value }))
                 }
               />
             </div>
+
+            {/* Email input field */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label htmlFor="userEmail" className="block text-sm font-medium text-gray-700">
                 Email
               </label>
-              <input
-                type="email"
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                value={editingUser.email}
+              <Input
+                id="userEmail"
+                name="userEmail"
+                placeholder="Enter user email"
+                value={currentUser.email}
                 onChange={(e) =>
-                  setEditingUser({ ...editingUser, email: e.target.value })
+                  setCurrentUser((prev) => ({ ...prev, email: e.target.value }))
                 }
               />
             </div>
+
+            {/* Role dropdown */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label htmlFor="userRole" className="block text-sm font-medium text-gray-700">
                 Role
               </label>
-              <input
-                type="text"
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                value={editingUser.role}
+              <select
+                id="userRole"
+                name="userRole"
+                value={currentUser.role}
                 onChange={(e) =>
-                  setEditingUser({ ...editingUser, role: e.target.value })
+                  setCurrentUser((prev) => ({ ...prev, role: e.target.value }))
                 }
-              />
+                className="block w-full border border-gray-300 rounded-md p-2"
+              >
+                <option value="Student">Student</option>
+                <option value="Instructor">Instructor</option>
+              </select>
             </div>
-            <button
-              type="submit"
-              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-            >
-              Save Changes
-            </button>
+
+            {/* Save button */}
+            <Button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600">
+              Save
+            </Button>
           </form>
-        </div>
+        </Modal>
       )}
     </div>
   );
-}
+};
+
+export default UsersPage;

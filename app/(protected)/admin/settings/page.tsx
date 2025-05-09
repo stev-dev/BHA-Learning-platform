@@ -1,142 +1,100 @@
-'use client'; // This marks this component as a client-side component
+"use client";
 
-import React, { useState } from "react";
+// Import necessary components
+import Input from "@/app/components/ui/Input"; // Reusable input component
+import Button from "@/app/components/ui/Button"; // Reusable button component
+import { useState } from "react"; // React hook for managing state
 
-const initialSettings = {
-  appName: "BHA Learning Platform",
-  theme: "light",
-  notifications: true,
-  privacy: "public",
-  defaultLanguage: "en",
-};
+const SettingsPage = () => {
+  // State to store platform settings
+  const [settings, setSettings] = useState({
+    platformName: "E-Learning Platform",
+    defaultLanguage: "English",
+    theme: "Light",
+  });
+  // NOTE: Replace this mock data with real data fetched from the backend.
 
-export default function SettingsPage() {
-  const [settings, setSettings] = useState(initialSettings);
-  const [editingSettings, setEditingSettings] = useState<boolean>(false);
+  // Function to handle saving settings
+  const handleSave = () => {
+    if (
+      settings.platformName.trim() === "" ||
+      settings.defaultLanguage.trim() === "" ||
+      settings.theme.trim() === ""
+    ) {
+      alert("All fields are required."); // Validate input fields
+      return;
+    }
 
-const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-  const { name, value, type,  } = e.target;
-  const checked = true;
-  if (type === "checkbox") {
-    // Cast the event target to HTMLInputElement to ensure that checked is accessible
-    setSettings({
-      ...settings,
-      [name]: (checked as boolean), // Typecast 'checked' to boolean
-    });
-  } else {
-    setSettings({
-      ...settings,
-      [name]: value,
-    });
-  }
-};
+    // Simulate saving settings (e.g., API call)
+    console.log("Settings saved:", settings);
+    alert("Settings have been saved successfully!");
+    // NOTE: Replace this with a PUT request to update settings in the backend.
+  };
 
-
-  const handleSaveSettings = () => {
-    setEditingSettings(false);
-    alert("Settings saved successfully!");
+  // Function to handle input changes
+  const handleChange = (field: string, value: string) => {
+    setSettings((prev) => ({ ...prev, [field]: value })); // Update the specific field in the settings state
   };
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">App Settings</h1>
-
-      <div className="bg-white shadow rounded-lg p-6 mb-4">
-        <h2 className="text-xl font-semibold mb-4">General Settings</h2>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">App Name</label>
-            <input
-              type="text"
-              name="appName"
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-              value={settings.appName}
-              onChange={handleChange}
-              disabled={!editingSettings}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Theme</label>
-            <select
-              name="theme"
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-              value={settings.theme}
-              onChange={handleChange}
-              disabled={!editingSettings}
-            >
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Default Language</label>
-            <select
-              name="defaultLanguage"
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-              value={settings.defaultLanguage}
-              onChange={handleChange}
-              disabled={!editingSettings}
-            >
-              <option value="en">English</option>
-              <option value="es">Spanish</option>
-              <option value="fr">French</option>
-            </select>
-          </div>
+    <div>
+      <h1 className="text-2xl font-bold mb-6">Platform Settings</h1>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault(); // Prevent form submission
+          handleSave(); // Save the settings
+        }}
+        className="space-y-4"
+      >
+        {/* Platform Name input field */}
+        <div>
+          <label htmlFor="platformName" className="block text-sm font-medium text-gray-700">
+            Platform Name
+          </label>
+          <Input
+            id="platformName"
+            name="platformName"
+            placeholder="Enter platform name"
+            value={settings.platformName}
+            onChange={(e) => handleChange("platformName", e.target.value)}
+          />
         </div>
-      </div>
 
-      <div className="bg-white shadow rounded-lg p-6 mb-4">
-        <h2 className="text-xl font-semibold mb-4">User Preferences</h2>
-        <div className="space-y-4">
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              name="notifications"
-              className="h-4 w-4 text-blue-600"
-              checked={settings.notifications}
-              onChange={handleChange}
-              disabled={!editingSettings}
-            />
-            <label className="ml-2 text-sm text-gray-700">Enable Notifications</label>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Privacy</label>
-            <select
-              name="privacy"
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-              value={settings.privacy}
-              onChange={handleChange}
-              disabled={!editingSettings}
-            >
-              <option value="public">Public</option>
-              <option value="private">Private</option>
-              <option value="restricted">Restricted</option>
-            </select>
-          </div>
+        {/* Default Language input field */}
+        <div>
+          <label htmlFor="defaultLanguage" className="block text-sm font-medium text-gray-700">
+            Default Language
+          </label>
+          <Input
+            id="defaultLanguage"
+            name="defaultLanguage"
+            placeholder="Enter default language"
+            value={settings.defaultLanguage}
+            onChange={(e) => handleChange("defaultLanguage", e.target.value)}
+          />
         </div>
-      </div>
 
-      {/* Edit / Save Button */}
-      <div className="flex justify-between">
-        {editingSettings ? (
-          <button
-            onClick={handleSaveSettings}
-            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-          >
-            Save Settings
-          </button>
-        ) : (
-          <button
-            onClick={() => setEditingSettings(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Edit Settings
-          </button>
-        )}
-      </div>
+        {/* Theme input field */}
+        <div>
+          <label htmlFor="theme" className="block text-sm font-medium text-gray-700">
+            Theme
+          </label>
+          <Input
+            id="theme"
+            name="theme"
+            placeholder="Enter theme (e.g., Light or Dark)"
+            value={settings.theme}
+            onChange={(e) => handleChange("theme", e.target.value)}
+          />
+        </div>
+
+        {/* Save button */}
+        <Button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600">
+          Save Settings
+        </Button>
+      </form>
     </div>
   );
-}
+};
+
+export default SettingsPage;

@@ -1,228 +1,214 @@
-'use client'; // This marks this component as a client-side component
+"use client";
 
-import React, { useState } from "react";
+// Import necessary components and icons
+import Table from "@/app/components/ui/Table"; // Reusable table component
+import Button from "@/app/components/ui/Button"; // Reusable button component
+import Modal from "@/app/components/ui/Modal"; // Reusable modal component
+import Input from "@/app/components/ui/Input"; // Reusable input component
+import { FaEdit, FaTrash, FaSearch } from "react-icons/fa"; // Icons for actions and search
+import { useState } from "react"; // React hook for managing state
 
-const initialCourses = [
-  { id: 1, title: "Math 101", description: "Introduction to Math", duration: "3 months" },
-  { id: 2, title: "Science 101", description: "Basic Science concepts", duration: "4 months" },
-  { id: 3, title: "History 101", description: "World History Overview", duration: "2 months" },
-];
+const CoursesPage = () => {
+  // State to store the list of courses
+  const [courses, setCourses] = useState([
+    { id: 1, title: "React for Beginners", instructor: "John Doe", duration: "10h" },
+    { id: 2, title: "Advanced CSS", instructor: "Jane Smith", duration: "8h" },
+  ]);
+  // NOTE: Replace this mock data with real data fetched from the backend.
 
-export default function CoursesPage() {
-  const [courses, setCourses] = useState(initialCourses);
-  const [search, setSearch] = useState("");
-  const [newCourse, setNewCourse] = useState({ title: "", description: "", duration: "" });
-  const [editingCourse, setEditingCourse] = useState<{ id: number; title: string; description: string; duration: string } | null>(null);
+  // State to control the visibility of the modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Filter courses based on search term
-  const filteredCourses = courses.filter((course) =>
-    course.title.toLowerCase().includes(search.toLowerCase()) ||
-    course.description.toLowerCase().includes(search.toLowerCase())
-  );
+  // State to store the current course being created or edited
+  const [currentCourse, setCurrentCourse] = useState<{ id?: number; title: string; instructor: string; duration: string }>({
+    title: "",
+    instructor: "",
+    duration: "",
+  });
 
-  const handleAddCourse = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newCourse.title && newCourse.description && newCourse.duration) {
-      setCourses([...courses, { ...newCourse, id: courses.length + 1 }]);
-      setNewCourse({ title: "", description: "", duration: "" }); // Clear form
-      alert("Course added successfully!");
-    } else {
-      alert("Please fill all fields!");
-    }
-  };
+  // State to store the search query for filtering courses
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const handleDeleteCourse = (id: number) => {
-    setCourses(courses.filter((course) => course.id !== id));
-    alert("Course deleted successfully!");
-  };
-
-  const handleEditCourse = (id: number) => {
-    const course = courses.find((course) => course.id === id);
+  // Function to handle editing a course
+  const handleEdit = (id: number) => {
+    const course = courses.find((course) => course.id === id); // Find the course by ID
     if (course) {
-      setEditingCourse(course);
+      setCurrentCourse(course); // Set the current course to the selected course
+      setIsModalOpen(true); // Open the modal
     }
   };
 
-  const handleUpdateCourse = () => {
-    if (editingCourse) {
-      setCourses(
-        courses.map((course) =>
-          course.id === editingCourse.id ? { ...editingCourse } : course
+  // Function to handle deleting a course
+  const handleDelete = (id: number) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this course?");
+    if (confirmDelete) {
+      setCourses((prev) => prev.filter((course) => course.id !== id)); // Remove the course from the list
+      // NOTE: Replace this with a DELETE request to the backend.
+    }
+  };
+
+  // Function to handle saving a course (create or update)
+  const handleSave = () => {
+    if (currentCourse.title.trim() === "" || currentCourse.instructor.trim() === "" || currentCourse.duration.trim() === "") {
+      alert("All fields are required."); // Validate input fields
+      return;
+    }
+
+    if (currentCourse.id) {
+      // Update existing course
+      setCourses((prev) =>
+        prev.map((course) =>
+          course.id === currentCourse.id ? { ...course, ...currentCourse } : course
         )
       );
-      setEditingCourse(null); // Reset editing mode
-      alert("Course updated successfully!");
+      // NOTE: Replace this with a PUT request to update the course in the backend.
+    } else {
+      // Create new course
+      setCourses((prev) => [
+        ...prev,
+        { id: Date.now(), ...currentCourse }, // Add the new course to the list
+      ]);
+      // NOTE: Replace this with a POST request to create the course in the backend.
     }
+    setIsModalOpen(false); // Close the modal
+    setCurrentCourse({ title: "", instructor: "", duration: "" }); // Reset the current course state
   };
 
+  // Function to handle opening the modal for creating a new course
+  const handleCreate = () => {
+    setCurrentCourse({ title: "", instructor: "", duration: "" }); // Reset the current course state
+    setIsModalOpen(true); // Open the modal
+  };
+
+  // Filter courses based on the search query
+  const filteredCourses = courses.filter((course) =>
+    course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    course.instructor.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Courses Management</h1>
-      
-      {/* Search */}
-      <div className="bg-white shadow rounded-lg p-6 mb-4">
-        <input
-          type="text"
-          placeholder="Search courses..."
-          className="w-full p-2 border border-gray-300 rounded-md"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+    <div>
+      {/* Header section with title and "Create Course" button */}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">Manage Courses</h1>
+        <Button onClick={handleCreate} className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600">
+          Create Course
+        </Button>
       </div>
 
-      {/* Courses Table */}
-      <div className="bg-white shadow rounded-lg p-6">
-        <table className="w-full border-collapse border border-gray-200">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border border-gray-300 p-2 text-left">Title</th>
-              <th className="border border-gray-300 p-2 text-left">Description</th>
-              <th className="border border-gray-300 p-2 text-left">Duration</th>
-              <th className="border border-gray-300 p-2 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredCourses.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="text-center p-4">
-                  No courses found.
-                </td>
-              </tr>
-            ) : (
-              filteredCourses.map((course) => (
-                <tr key={course.id} className="hover:bg-gray-50">
-                  <td className="border border-gray-300 p-2">{course.title}</td>
-                  <td className="border border-gray-300 p-2">{course.description}</td>
-                  <td className="border border-gray-300 p-2">{course.duration}</td>
-                  <td className="border border-gray-300 p-2">
-                    <button
-                      className="text-blue-600 hover:underline mr-2"
-                      onClick={() => handleEditCourse(course.id)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="text-red-600 hover:underline"
-                      onClick={() => handleDeleteCourse(course.id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+      {/* Search bar for filtering courses */}
+      <div className="flex items-center mb-4">
+        <div className="relative w-full max-w-md">
+          <Input
+            id="search"
+            name="search"
+            placeholder="Search courses..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)} // Update the search query state
+            className="pl-10"
+          />
+          <FaSearch className="absolute top-3 left-3 text-gray-400" /> {/* Search icon */}
+        </div>
       </div>
 
-      {/* Add Course Form */}
-      <div className="bg-white shadow rounded-lg p-6">
-        <h2 className="text-xl font-bold mb-4">Add New Course</h2>
-        <form onSubmit={handleAddCourse} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Title
-            </label>
-            <input
-              type="text"
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-              placeholder="Enter course title"
-              value={newCourse.title}
-              onChange={(e) => setNewCourse({ ...newCourse, title: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Description
-            </label>
-            <input
-              type="text"
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-              placeholder="Enter course description"
-              value={newCourse.description}
-              onChange={(e) => setNewCourse({ ...newCourse, description: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Duration
-            </label>
-            <input
-              type="text"
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-              placeholder="Enter course duration"
-              value={newCourse.duration}
-              onChange={(e) => setNewCourse({ ...newCourse, duration: e.target.value })}
-            />
-          </div>
-          <button
-            type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Add Course
-          </button>
-        </form>
-      </div>
+      {/* Table displaying the list of courses */}
+      <Table
+        headers={["Title", "Instructor", "Duration", "Actions"]} // Table headers
+        rows={filteredCourses.map((course) => [
+          course.title,
+          course.instructor,
+          course.duration,
+          <div className="flex space-x-2" key={course.id}>
+            {/* Edit button */}
+            <button
+              onClick={() => handleEdit(course.id)}
+              className="text-blue-500 hover:text-blue-700"
+              title="Edit"
+            >
+              <FaEdit />
+            </button>
+            {/* Delete button */}
+            <button
+              onClick={() => handleDelete(course.id)}
+              className="text-red-500 hover:text-red-700"
+              title="Delete"
+            >
+              <FaTrash />
+            </button>
+          </div>,
+        ])}
+      />
 
-      {/* Edit Course Form */}
-      {editingCourse && (
-        <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-xl font-bold mb-4">Edit Course</h2>
+      {/* Modal for creating or editing a course */}
+      {isModalOpen && (
+        <Modal onClose={() => setIsModalOpen(false)}>
+          <h2 className="text-xl font-bold mb-4">
+            {currentCourse.id ? "Edit Course" : "Create Course"} {/* Modal title */}
+          </h2>
           <form
             onSubmit={(e) => {
-              e.preventDefault();
-              handleUpdateCourse();
+              e.preventDefault(); // Prevent form submission
+              handleSave(); // Save the course
             }}
             className="space-y-4"
           >
+            {/* Title input field */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Title
+              <label htmlFor="courseTitle" className="block text-sm font-medium text-gray-700">
+                Course Title
               </label>
-              <input
-                type="text"
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                value={editingCourse.title}
+              <Input
+                id="courseTitle"
+                name="courseTitle"
+                placeholder="Enter course title"
+                value={currentCourse.title}
                 onChange={(e) =>
-                  setEditingCourse({ ...editingCourse, title: e.target.value })
+                  setCurrentCourse((prev) => ({ ...prev, title: e.target.value }))
                 }
               />
             </div>
+
+            {/* Instructor input field */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Description
+              <label htmlFor="courseInstructor" className="block text-sm font-medium text-gray-700">
+                Instructor
               </label>
-              <input
-                type="text"
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                value={editingCourse.description}
+              <Input
+                id="courseInstructor"
+                name="courseInstructor"
+                placeholder="Enter instructor name"
+                value={currentCourse.instructor}
                 onChange={(e) =>
-                  setEditingCourse({ ...editingCourse, description: e.target.value })
+                  setCurrentCourse((prev) => ({ ...prev, instructor: e.target.value }))
                 }
               />
             </div>
+
+            {/* Duration input field */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label htmlFor="courseDuration" className="block text-sm font-medium text-gray-700">
                 Duration
               </label>
-              <input
-                type="text"
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                value={editingCourse.duration}
+              <Input
+                id="courseDuration"
+                name="courseDuration"
+                placeholder="Enter course duration (e.g., 10h)"
+                value={currentCourse.duration}
                 onChange={(e) =>
-                  setEditingCourse({ ...editingCourse, duration: e.target.value })
+                  setCurrentCourse((prev) => ({ ...prev, duration: e.target.value }))
                 }
               />
             </div>
-            <button
-              type="submit"
-              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-            >
-              Save Changes
-            </button>
+
+            {/* Save button */}
+            <Button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600">
+              Save
+            </Button>
           </form>
-        </div>
+        </Modal>
       )}
     </div>
   );
-}
+};
+
+export default CoursesPage;
