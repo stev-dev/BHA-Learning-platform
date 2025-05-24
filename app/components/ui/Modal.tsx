@@ -1,24 +1,28 @@
-import React from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import { Fragment, ReactNode } from "react";
 
 interface ModalProps {
+  isOpen: boolean;
   onClose: () => void;
-  children: React.ReactNode;
+  title?: string;
+  children: ReactNode;
 }
 
-const Modal = ({ onClose, children }: ModalProps) => {
+export function Modal({ isOpen, onClose, title, children }: ModalProps) {
+  if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-200/60">
+      <div className="bg-white rounded-xl shadow-lg p-6 min-w-[320px] max-w-full w-full md:w-[400px] relative">
         <button
+          className="absolute top-3 right-3 text-gray-400 hover:text-gray-700"
           onClick={onClose}
-          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+          aria-label="Fermer"
         >
-          &times;
+          ×
         </button>
+        {title && <h2 className="text-xl font-bold mb-4">{title}</h2>}
         {children}
       </div>
     </div>
   );
-};
-
-export default Modal;
+}

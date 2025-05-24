@@ -1,28 +1,36 @@
 import React from "react";
 
-interface ButtonProps {
-  children: React.ReactNode;
-  onClick?: () => void;
-  type?: "button" | "submit" | "reset";
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: "primary" | "secondary" | "ghost";
+  size?: "sm" | "md" | "lg" | "icon";
   className?: string;
-  disabled?: boolean;
+  children: React.ReactNode;
 }
 
-export default function Button({
-  children,
-  onClick,
-  type = "button",
+export function Button({
+  variant = "primary",
+  size = "md",
   className = "",
-  disabled = false,
+  children,
+  ...props
 }: ButtonProps) {
+  const base =
+    "inline-flex items-center justify-center rounded-lg font-semibold transition focus:outline-none";
+  const variants = {
+    primary: "bg-violet-400 text-white hover:bg-violet-500",
+    secondary: "bg-gray-100 text-gray-700 hover:bg-gray-200",
+    ghost: "bg-transparent hover:bg-gray-100 text-gray-700",
+  };
+  const sizes = {
+    sm: "h-8 px-3 text-sm",
+    md: "h-10 px-4",
+    lg: "h-12 px-6 text-lg",
+    icon: "h-10 w-10 p-0",
+  };
   return (
     <button
-      type={type}
-      onClick={onClick}
-      className={`px-4 py-2 rounded ${className} ${
-        disabled ? "opacity-50 cursor-not-allowed" : ""
-      }`}
-      disabled={disabled}
+      className={`${base} ${variants[variant]} ${sizes[size]} ${className}`}
+      {...props}
     >
       {children}
     </button>

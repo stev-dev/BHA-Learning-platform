@@ -1,16 +1,9 @@
 import React from "react";
 
-interface CardProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
-const Card = ({ children, className = "" }: CardProps) => {
+export function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`border border-gray-200 rounded-lg shadow-sm ${className}`}>
+    <div className={`bg-white rounded-xl border ${className}`}>
       {children}
     </div>
   );
-};
-
-export default Card;
+}

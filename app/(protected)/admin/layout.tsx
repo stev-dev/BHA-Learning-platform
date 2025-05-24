@@ -1,19 +1,27 @@
-import React from "react";
-import Navbar from "@/app/components/admin/Navbar";
-import Sidebar from "@/app/components/admin/Sidebar";
+"use client";
 
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+import React, { ReactNode, useState } from "react";
+import { AdminSidebar } from "../../components/admin/AdminSidebar";
+import { AdminNavbar } from "../../components/admin/AdminNavbar";
+import { Menu } from "lucide-react";
+
+interface AdminLayoutProps {
+  children: ReactNode;
+}
+
+const Layout = ({ children }: AdminLayoutProps) => {
+  const [sidebarOpen, setSidebarOpen] = useState(true); // ouvert par défaut
+
   return (
-    <div className="flex h-screen">
-      {/* Sidebar */}
-      <Sidebar />
+    <div className="flex h-screen bg-gray-50">
+      <AdminSidebar open={sidebarOpen} setOpen={setSidebarOpen} />
       <div className="flex-1 flex flex-col">
-        {/* Navbar */}
-        <Navbar />
-        {/* Main Content */}
-        <div className="flex-1 p-4 bg-gray-50">{children}</div>
+        <AdminNavbar />
+        <main className="flex-1 overflow-y-auto p-6">{children}</main>
       </div>
     </div>
   );
-}
+};
+
+export default Layout;

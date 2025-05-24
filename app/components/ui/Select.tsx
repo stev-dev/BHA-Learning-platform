@@ -1,35 +1,26 @@
-import React from "react";
+import { SelectHTMLAttributes, forwardRef } from "react";
 
-interface SelectProps {
-  name: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  options: { value: string; label: string }[];
-  className?: string;
-  disabled?: boolean;
+interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
+  label?: string;
+  options: { label: string; value: string }[];
 }
 
-export default function Select({
-  name,
-  value,
-  onChange,
-  options,
-  className = "",
-  disabled = false,
-}: SelectProps) {
-  return (
-    <select
-      name={name}
-      value={value}
-      onChange={onChange}
-      className={`border border-gray-300 rounded-md p-2 ${className}`}
-      disabled={disabled}
-    >
-      {options.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.label}
-        </option>
-      ))}
-    </select>
-  );
-}
+export const Select = forwardRef<HTMLSelectElement, SelectProps>(
+  ({ label, options, className = "", ...props }, ref) => (
+    <div className="w-full">
+      {label && <label className="block mb-1 text-sm font-medium text-gray-700">{label}</label>}
+      <select
+        ref={ref}
+        className={`w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
+        {...props}
+      >
+        {options.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  )
+);
+Select.displayName = "Select";
