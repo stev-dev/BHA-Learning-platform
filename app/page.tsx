@@ -9,6 +9,7 @@ import {
   Megaphone,
   DollarSign,
   BarChart3,
+  Search,
 } from "lucide-react";
 
 export default function LandingPage() {
@@ -117,22 +118,63 @@ export default function LandingPage() {
             <img src="/images/logo.png" alt="BHA" className="h-8 w-auto" />
           </button>
           <div className="hidden md:flex items-center space-x-6">
-            {["Home", "Courses", "Instructors"].map((item, i) => (
+            {["Home", "Courses", "Instructors", "Contact Us"].map((item, i) => (
               <a
                 key={i}
-                href={`#${item.toLowerCase()}`}
+                href={
+                  item === "Contact Us"
+                    ? "#"
+                    : `#${item.toLowerCase().replace(" ", "")}`
+                }
                 className="text-gray-700 hover:text-slate-800"
+                onClick={
+                  item === "Contact Us"
+                    ? (e) => {
+                        e.preventDefault();
+                        alert("Contact us at: bha@gmail.com");
+                      }
+                    : item === "Courses"
+                    ? (e) => {
+                        e.preventDefault();
+                        document
+                          .getElementById("courses")
+                          ?.scrollIntoView({ behavior: "smooth" });
+                      }
+                    : item === "Home"
+                    ? (e) => {
+                        e.preventDefault();
+                        document
+                          .getElementById("home")
+                          ?.scrollIntoView({ behavior: "smooth" });
+                      }
+                    : item === "Instructors"
+                    ? (e) => {
+                        e.preventDefault();
+                        document
+                          .getElementById("instructors")
+                          ?.scrollIntoView({ behavior: "smooth" });
+                      }
+                    : undefined
+                }
               >
                 {item}
               </a>
             ))}
           </div>
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-4">
+            <div className="hidden md:flex items-center bg-gray-100 rounded-lg px-3 py-2">
+              <Search className="w-4 h-4 text-gray-400 mr-2" />
+              <input
+                type="text"
+                placeholder="Search courses..."
+                className="bg-transparent border-none outline-none text-sm w-48"
+              />
+            </div>
             <button
               onClick={() => handleNavigation("/login")}
               className="px-4 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50"
             >
-              Login
+              Sign In
             </button>
             <button
               onClick={() => handleNavigation("/register")}
@@ -149,18 +191,27 @@ export default function LandingPage() {
         id="home"
         className="pt-20 pb-16 bg-gradient-to-br from-slate-800 to-slate-600 text-white"
       >
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <Award className="w-8 h-8 text-orange-400 mx-auto mb-4" />
-          <h1 className="text-4xl font-bold mb-4">Business House Academy</h1>
-          <p className="text-slate-200 mb-8">Develop your business expertise</p>
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 max-w-2xl mx-auto">
-            <div className="w-full bg-orange-500 h-1 rounded-full mb-4"></div>
-            <h2 className="text-xl font-bold mb-4">Your desired training</h2>
-            <select className="w-full bg-white text-slate-900 h-12 mb-4 px-3 rounded-md border">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6">
+              Learn <span className="text-orange-400">Without Limits</span>
+            </h1>
+            <p className="text-xl text-slate-200 mb-8 max-w-3xl mx-auto">
+              Discover thousands of expert-led courses to accelerate your career
+              and unlock your potential with cutting-edge AI-enhanced learning.
+            </p>
+          </div>
+
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-8 max-w-2xl mx-auto">
+            <div className="w-full bg-orange-500 h-1 rounded-full mb-6"></div>
+            <h2 className="text-2xl font-bold mb-6 text-center">
+              Your desired training
+            </h2>
+            <select className="w-full bg-white text-slate-900 h-14 mb-6 px-4 rounded-lg border text-lg">
               <option value="">Choose your training</option>
               {categories.map((cat, i) => (
                 <option key={i} value={cat.name.toLowerCase()}>
-                  {cat.name} ({cat.courses})
+                  {cat.name} ({cat.courses} courses)
                 </option>
               ))}
             </select>
@@ -170,9 +221,9 @@ export default function LandingPage() {
                   .getElementById("courses")
                   ?.scrollIntoView({ behavior: "smooth" })
               }
-              className="w-full bg-blue-600 hover:bg-blue-700 h-12 text-white rounded-md font-medium"
+              className="w-full bg-orange-500 hover:bg-orange-600 h-14 text-white rounded-lg font-semibold text-lg transition-colors"
             >
-              NEXT
+              Start Learning
             </button>
           </div>
         </div>
@@ -217,7 +268,7 @@ export default function LandingPage() {
                   </div>
                   <button
                     onClick={() => handleCourseEnroll(course.title)}
-                    className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 rounded-md"
+                    className="w-full bg-slate-800 hover:bg-slate-900 text-white py-2 rounded-md"
                   >
                     Enroll Now
                   </button>
@@ -234,8 +285,8 @@ export default function LandingPage() {
           <div className="grid grid-cols-3 gap-6 mb-16 text-center">
             {stats.map((stat, i) => (
               <div key={i}>
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-orange-100 rounded-full mb-2">
-                  <stat.icon className="w-6 h-6 text-orange-600" />
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-slate-100 rounded-full mb-2">
+                  <stat.icon className="w-6 h-6 text-slate-800" />
                 </div>
                 <div className="text-2xl font-bold text-slate-900">
                   {stat.value}
@@ -257,7 +308,7 @@ export default function LandingPage() {
                 className="bg-white rounded-lg border shadow-sm hover:shadow-lg transition-shadow text-center"
               >
                 <div className="p-6">
-                  <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full mx-auto mb-3 flex items-center justify-center">
+                  <div className="w-20 h-20 bg-gradient-to-br from-slate-700 to-slate-900 rounded-full mx-auto mb-3 flex items-center justify-center">
                     <span className="text-white font-bold text-xl">
                       {instructor.name
                         .split(" ")
@@ -268,7 +319,7 @@ export default function LandingPage() {
                   <h3 className="text-lg font-semibold mb-1">
                     {instructor.name}
                   </h3>
-                  <p className="text-orange-600 text-sm mb-2">
+                  <p className="text-slate-700 text-sm mb-2">
                     {instructor.role}
                   </p>
                   <p className="text-slate-600 text-sm">{instructor.bio}</p>
@@ -299,7 +350,7 @@ export default function LandingPage() {
                 }
               >
                 <div className="p-4 text-center">
-                  <cat.icon className="w-6 h-6 text-orange-600 mx-auto mb-2" />
+                  <cat.icon className="w-6 h-6 text-slate-800 mx-auto mb-2" />
                   <h3 className="text-lg font-semibold mb-1">{cat.name}</h3>
                   <p className="text-slate-600 text-sm">
                     {cat.courses} courses
@@ -348,7 +399,7 @@ export default function LandingPage() {
               <ul className="space-y-1 text-slate-400 text-sm">
                 {["Strategy", "Marketing", "Finance"].map((item, i) => (
                   <li key={i}>
-                    <a href="#courses" className="hover:text-orange-400">
+                    <a href="#courses" className="hover:text-slate-300">
                       {item}
                     </a>
                   </li>
@@ -360,7 +411,7 @@ export default function LandingPage() {
               <ul className="space-y-1 text-slate-400 text-sm">
                 {["Contact", "FAQ", "Help"].map((item, i) => (
                   <li key={i}>
-                    <a href="#" className="hover:text-orange-400">
+                    <a href="#" className="hover:text-slate-300">
                       {item}
                     </a>
                   </li>
@@ -369,7 +420,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="border-t border-slate-800 mt-6 pt-6 text-center text-slate-400 text-sm">
-            <p>&copy; 2024 Business House Academy. All rights reserved.</p>
+            <p>&copy; 2025 Business House Academy. All rights reserved.</p>
           </div>
         </div>
       </footer>
