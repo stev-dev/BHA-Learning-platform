@@ -1,5 +1,6 @@
 import type React from "react";
 import "./globals.css"; // Styles globaux
+import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata = {
   title: "BHA Learning Platform",
@@ -12,14 +13,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <head>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      </head>
-      <body className="max-h-screen flex flex-col">
-        <div>{children}</div>
-      </body>
-    </html>
+    <ClerkProvider
+      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+    >
+      <html lang="en">
+        <body>{children}</body>
+      </html>
+    </ClerkProvider>
   );
 }

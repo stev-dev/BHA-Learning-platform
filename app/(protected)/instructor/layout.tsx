@@ -17,7 +17,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       })
         .then((res) => res.json())
         .then((data) => {
-          if (!data.roles || !data.roles.includes("student")) {
+          if (!data.roles || !data.roles.includes("instructor")) {
             router.replace("/unauthorized");
           } else {
             setChecking(false);
@@ -29,4 +29,4 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   if (checking) return null;
 
   return <>{children}</>;
-}
+} 

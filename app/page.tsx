@@ -285,8 +285,8 @@ export default function LandingPage() {
           <div className="grid grid-cols-3 gap-6 mb-16 text-center">
             {stats.map((stat, i) => (
               <div key={i}>
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-slate-100 rounded-full mb-2">
-                  <stat.icon className="w-6 h-6 text-slate-800" />
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-orange-100 rounded-full mb-2">
+                  <stat.icon className="w-6 h-6 text-orange-600" />
                 </div>
                 <div className="text-2xl font-bold text-slate-900">
                   {stat.value}
@@ -319,7 +319,7 @@ export default function LandingPage() {
                   <h3 className="text-lg font-semibold mb-1">
                     {instructor.name}
                   </h3>
-                  <p className="text-slate-700 text-sm mb-2">
+                  <p className="text-orange-600 text-sm mb-2">
                     {instructor.role}
                   </p>
                   <p className="text-slate-600 text-sm">{instructor.bio}</p>
@@ -350,7 +350,7 @@ export default function LandingPage() {
                 }
               >
                 <div className="p-4 text-center">
-                  <cat.icon className="w-6 h-6 text-slate-800 mx-auto mb-2" />
+                  <cat.icon className="w-6 h-6 text-orange-600 mx-auto mb-2" />
                   <h3 className="text-lg font-semibold mb-1">{cat.name}</h3>
                   <p className="text-slate-600 text-sm">
                     {cat.courses} courses
@@ -399,7 +399,7 @@ export default function LandingPage() {
               <ul className="space-y-1 text-slate-400 text-sm">
                 {["Strategy", "Marketing", "Finance"].map((item, i) => (
                   <li key={i}>
-                    <a href="#courses" className="hover:text-slate-300">
+                    <a href="#courses" className="hover:text-orange-400">
                       {item}
                     </a>
                   </li>
@@ -411,7 +411,7 @@ export default function LandingPage() {
               <ul className="space-y-1 text-slate-400 text-sm">
                 {["Contact", "FAQ", "Help"].map((item, i) => (
                   <li key={i}>
-                    <a href="#" className="hover:text-slate-300">
+                    <a href="#" className="hover:text-orange-400">
                       {item}
                     </a>
                   </li>
@@ -420,7 +420,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="border-t border-slate-800 mt-6 pt-6 text-center text-slate-400 text-sm">
-            <p>&copy; 2025 Business House Academy. All rights reserved.</p>
+            <p>&copy; 2024 Business House Academy. All rights reserved.</p>
           </div>
         </div>
       </footer>
